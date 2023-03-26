@@ -1,6 +1,8 @@
 package com.badmashcompany108.studentManagement108;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -11,33 +13,35 @@ public class StudentController {
     @Autowired
      StudentService studentService;
     @GetMapping("/get_info")
-     public Student getStudent(@RequestParam("id") int admNo){
+     public ResponseEntity getStudent(@RequestParam("id") int admNo){
 
-        return studentService.getStudent(admNo) ;
+        Student stud = studentService.getStudent(admNo);
+        return new ResponseEntity<>(stud, HttpStatus.FOUND);
+
      }
 
      @PostMapping("/add")
-     public String addStudent(@RequestBody() Student student){
+     public ResponseEntity addStudent(@RequestBody() Student student){
 //         db.put(student.getAdmNo(),student);
-         return studentService.addStudent(student);
+         String response = studentService.addStudent(student);
+         return new ResponseEntity<>(response, HttpStatus.CREATED);
      }
 
      @DeleteMapping("/delete/{id}")
-     public String deleteStudent(@PathVariable("id") int admNo){
+     public ResponseEntity deleteStudent(@PathVariable("id") int admNo){
          //db.remove(admNo);
-         return studentService.deleteStudent(admNo);
+         String response = studentService.deleteStudent(admNo);
+         return new ResponseEntity<>(response, HttpStatus.FOUND);
      }
 
-     public String updateStudent(@RequestParam("id") int id,@RequestParam("age") int age){
-//         if(db.containsKey(id)){
-//             return "Invalid Id";
-//         }
-//
-//             Student student = db.get(id);
-//             student.setAge(age);
-//             db.put(id,student);
+     @PutMapping("/update_Student")
+     public ResponseEntity updateStudent(@RequestParam("id") int id,@RequestParam("age") int age){
 
-             return studentService.updateStudent(id, age);
+         String response = studentService.deleteStudent(id);
+         if(response == null)
+         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
+         return new ResponseEntity("updated",HttpStatus.ACCEPTED);
 
      }
 }
